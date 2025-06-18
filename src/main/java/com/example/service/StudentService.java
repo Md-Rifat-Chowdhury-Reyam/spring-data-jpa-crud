@@ -28,15 +28,22 @@ public class StudentService {
         return allStudent;
     }
 
-    @Transactional
-    public Student findById(int id)
+    @Transactional(readOnly = true)
+    public Optional<Student> findById(int id)
     {
-        return studentRepository.findById(id).orElseThrow(() -> new RuntimeException("Student not found with " + id));
+        return studentRepository.findById(id);
     }
 
     @Transactional
     public void deleteStudentById(int id)
     {
         studentRepository.deleteById(id);
+    }
+
+    @Transactional
+    public void deleteAndReturnStudentById(int id) {
+        Student student = studentRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Student not found with id: " + id));
+        studentRepository.delete(student);
     }
 }
